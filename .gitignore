@@ -1,5 +1,6 @@
 #source files
 *.csv
+*.txt
 
 #json files
 *.json
