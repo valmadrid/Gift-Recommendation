@@ -6,6 +6,12 @@
 *.json
 json/
 
+#image files
+*.png
+*.jpeg
+*.jpg
+image/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
