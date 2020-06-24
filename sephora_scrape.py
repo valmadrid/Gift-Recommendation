@@ -148,6 +148,9 @@ def download_json(filename, folder_path):
 
     details_dict["id"] = data["productId"]
     details_dict["name"] = data["displayName"]
+    details_dict["brand_id"] = data["brand"]["brandId"]
+
+    details_dict["brand_name"] = data["brand"]["displayName"]
 
     short_desc = data[
         "quickLookDescription"] if "quickLookDescription" in data else data[
@@ -155,7 +158,8 @@ def download_json(filename, folder_path):
     details_dict["short_desc"] = tag_remover.sub(" ", short_desc).strip()
 
     details_dict["long_desc"] = tag_remover.sub(
-        " ", data["longDescription"]).strip()
+        " ", data["longDescription"]).strip() if "longDescription" in data else tag_remover.sub(
+        " ", short_desc).strip()
 
     details_dict["item"] = data["currentSku"]["skuId"]
     details_dict["item_name"] = data["currentSku"][
@@ -246,8 +250,7 @@ def download_json(filename, folder_path):
         " ",
         data["suggestedUsage"]).strip() if "suggestedUsage" in data else np.nan
 
-    details_dict["brand_name"] = data["brand"]["displayName"]
-    details_dict["brand_id"] = data["brand"]["brandId"]
+    
     details_dict["brand_long"] = data["brand"]["longDescription"]
 
     return details_dict
