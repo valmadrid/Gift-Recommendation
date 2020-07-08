@@ -300,7 +300,8 @@ class Sephora():
         filter_id = "&Filter=ProductId%3A{}".format(id_)
         filter_time = "&Filter=SubmissionTime:gte:{}&Filter=SubmissionTime:lte:{}".format(
             start_date, end_date)
-        filter_ratings = "&Filter=Rating:gte:3&Filter=IsRecommended:eq:true"
+#         filter_ratings = "&Filter=Rating:gte:3&Filter=IsRecommended:eq:true"
+#         filter_ratings = "&Filter=Rating:lte:2&Filter=IsRecommended:eq:true"
         includes = "&Include=Products%2CComments&Stats=Reviews"
         
         for offset in range(-1, 10000):
@@ -317,7 +318,8 @@ class Sephora():
             else:
                 page = "&Sort=SubmissionTime:desc&Limit=100&Offset={}".format(offset * 100)
                 self.url = prefix + filter_id + filter_ratings + filter_time + page
-                self.file_path = folder_path+id_+"_{}.json".format(offset)
+#                 self.file_path = folder_path+id_+"_{}.json".format(offset)
+#                 self.file_path = folder_path+id_+"_0{}.json".format(offset)
                 self.browser.get(self.url)
                 self.data = json.loads(self.browser.find_element_by_xpath("/html/body/pre").text)
                 with open(self.file_path, "w") as outfile:

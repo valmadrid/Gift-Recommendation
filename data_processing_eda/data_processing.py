@@ -96,12 +96,23 @@ def extract_info(filename, folder_path):
         category_id = [category_id_1, category_id_2, category_id_3]
         category = [category_1, category_2, category_3]
 
+<<<<<<< HEAD
+        details_dict["categories"] = [cat.lower() for cat in category if cat != "nan"]
+        details_dict["categories"] = ["her" if x=="women" else x for x in details_dict["categories"]]
+        details_dict["categories"] = ["him" if x=="men" else x for x in details_dict["categories"]]
+        details_dict["categories_id"] = [id_ for id_ in category_id if id_ != "nan"]
+
+    else:
+        details_dict["categories"] = np.nan
+        details_dict["categories_id"] = np.nan
+=======
         details_dict["categories"] = dict(
             zip([id_ for id_ in category_id if id_ != "nan"],
                 [cat for cat in category if cat != "nan"]))
 
     else:
         details_dict["categories"] = np.nan
+>>>>>>> master
 
     details_dict["full_url"] = data["fullSiteProductUrl"]
     details_dict[
