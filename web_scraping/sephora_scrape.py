@@ -144,8 +144,8 @@ class Sephora():
         self.product_list = []
 
         tag_remover = re.compile(
-            "<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});|\r|\n")
-
+            "<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});|\r|\n|&#x?[^;]{2,4}")
+        
         # get all products from json
 
         for i in self.product_json:
@@ -191,17 +191,18 @@ class Sephora():
         self.product_list = []
 
         tag_remover = re.compile(
-            "<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});|\r|\n")
+            "<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});|\r|\n|&#x?[^;]{2,4}")
         ref_pattern = re.compile("P[0-9]+")
         item_pattern = re.compile("s[0-9]+")
 
         for tag in self.tags:
             product_dict = {}
 
-            product_dict["brand_name"] = tag.find(attrs={
+            product_dict["brand_name"] = tag_remover.sub(
+                            "", tag.find(attrs={
                 "data-at":
                 re.compile("sku_item_brand")
-            }).get_text(strip=True) if tag.find(
+            }).get_text(strip=True)) if tag.find(
                 attrs={"data-at": re.compile("sku_item_brand")}) else np.nan
 
             product_dict["product_id"] = ref_pattern.findall(
@@ -213,10 +214,11 @@ class Sephora():
                 }).get("src"))[-1].strip("s") if tag.find(
                     attrs={"src": re.compile("/productimages/")}) else np.nan
 
-            product_dict["product_name"] = tag.find(
+            product_dict["product_name"] = tag_remover.sub(
+                            "", tag.find(
                 attrs={
                     "data-at": re.compile("sku_item_name")
-                }).get_text(strip=True) if tag.find(
+                }).get_text(strip=True)) if tag.find(
                     attrs={"data-at": re.compile("sku_item_name")}) else np.nan
 
             product_dict["product_price_low"] = float(
@@ -298,23 +300,26 @@ class Sephora():
         filter_id = "&Filter=ProductId%3A{}".format(id_)
         filter_time = "&Filter=SubmissionTime:gte:{}&Filter=SubmissionTime:lte:{}".format(
             start_date, end_date)
-        filter_ratings = "&Filter=Rating:gte:3&Filter=IsRecommended:eq:true"
+#         filter_ratings = "&Filter=Rating:gte:3&Filter=IsRecommended:eq:true"
+#         filter_ratings = "&Filter=Rating:lte:2&Filter=IsRecommended:eq:true"
         includes = "&Include=Products%2CComments&Stats=Reviews"
         
         for offset in range(-1, 10000):
             if offset == -1:
-                page = "&Sort=SubmissionTime:desc&Limit=1&Offset=0"
-                self.url = prefix + filter_id + includes + page
-                self.file_path = folder_path+id_+"_stats.json"
-                self.browser.get(self.url)
-                self.data = json.loads(self.browser.find_element_by_xpath("/html/body/pre").text)
-                with open(self.file_path, "w") as outfile:
-                    json.dump(self.data, outfile, indent=2)
+                continue
+#                 page = "&Sort=SubmissionTime:desc&Limit=1&Offset=0"
+#                 self.url = prefix + filter_id + includes + page
+#                 self.file_path = folder_path+id_+"_stats.json"
+#                 self.browser.get(self.url)
+#                 self.data = json.loads(self.browser.find_element_by_xpath("/html/body/pre").text)
+#                 with open(self.file_path, "w") as outfile:
+#                     json.dump(self.data, outfile, indent=2)
                 
             else:
                 page = "&Sort=SubmissionTime:desc&Limit=100&Offset={}".format(offset * 100)
                 self.url = prefix + filter_id + filter_ratings + filter_time + page
-                self.file_path = folder_path+id_+"_{}.json".format(offset)
+#                 self.file_path = folder_path+id_+"_{}.json".format(offset)
+#                 self.file_path = folder_path+id_+"_0{}.json".format(offset)
                 self.browser.get(self.url)
                 self.data = json.loads(self.browser.find_element_by_xpath("/html/body/pre").text)
                 with open(self.file_path, "w") as outfile:
